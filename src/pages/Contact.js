@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import emailjs from '@emailjs/browser'
+import React, { useRef ,useState } from 'react';
+// import emailjs from '@emailjs/browser'
 import { Box, Button, Container, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
 import { Link } from 'react-router-dom'
@@ -10,30 +10,51 @@ import { Link } from 'react-router-dom'
 
 const Contact = () => {
 
-    const form = useRef();
+    const form = useRef(null);
+    const scriptUrl =  "https://script.google.com/macros/s/AKfycbwzXF8qH-5xiPq7BdNPyV2W7UW4CcI7YT2gaLFRxD8o4yU28Q9L2UEZAJIe7Nw-gwC8/exec"
+    const [loading, setLoading] = useState(false)
 
-    const sendEmail = (e) => {
-        e.preventDefault();
+    const handleSubmit = (e) =>{
+        e.preventDefault()
+        setLoading(true)
 
-        emailjs
-            .sendForm(
-                "service_pb9hapv",
-                "template_fbi8scr",
-                form.current,
-                "F4-cL2_b52u2Ir2oI"
-            )
-            .then(
-                (result) => {
-                    console.log(result.text);
-                    alert('Your message has been sent successfully. We will contact you soon!')
+        fetch(scriptUrl, {
+        method: 'POST', 
+        body: new FormData(form.current),
+
+    }).then(res => {
+            console.log("SUCCESSFULLY SUBMITTED")
+            alert('Your message has been sent successfully. We will contact you soon!')
+            setLoading(false)
+        })
+        
+        .catch(err => console.log(err))
+        
+    }
+
+   
+    // const sendEmail = (e) => {
+    //     e.preventDefault();
+
+    //     emailjs
+    //         .sendForm(
+    //             "service_pb9hapv",
+    //             "template_fbi8scr",
+    //             form.current,
+    //             "F4-cL2_b52u2Ir2oI"
+    //         )
+    //         .then(
+    //             (result) => {
+    //                 console.log(result.text);
+    //                 alert('Your message has been sent successfully. We will contact you soon!')
 
 
-                },
-                (error) => {
-                    console.log(error.text);
-                }
-            );
-    };
+    //             },
+    //             (error) => {
+    //                 console.log(error.text);
+    //             }
+    //         );
+    // };
 
     return (
         <>
@@ -88,15 +109,15 @@ const Contact = () => {
                         display: 'flex',
                         justifyContent: 'center',
                     }}>
-                        <form ref={form} onSubmit={sendEmail} className="form-main">
+                        <form ref={form} onSubmit={handleSubmit} className="form-main">
                             <label>First Name *</label>
-                            <input type="text" name="user_name" required />
+                            <input type="text" name="Name" required />
                             <label >Phone Number *</label>
-                            <input type="number" name="user_phone" required />
+                            <input type="number" name="Phone" required />
                             <label>Email </label>
-                            <input type="email" name="user_email"  />
+                            <input type="email" name="Email"  />
                             <label>Type of service:</label>
-                            <select name="user_value" id="cars" required>
+                            <select name="Services" id="cars" required>
                                 <option >Please Select</option>
                                 <option value="Legal Document Support">Legal Document Support</option>
                                 <option value="Set-Up your E-Commerce Bussiness">Set-Up your E-Commerce Bussiness</option>
@@ -105,7 +126,7 @@ const Contact = () => {
                                 <option value="Other">Other</option>
                             </select>
                             <label>Message</label>
-                            <textarea name="message" />
+                            <textarea name="Message" />
                             <Button
                             type="submit"
                             value="Send"
@@ -129,5 +150,4 @@ const Contact = () => {
     );
 };
 
-export default Contact;;
-
+export default Contact;
